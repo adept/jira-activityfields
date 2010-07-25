@@ -1,0 +1,9 @@
+This plug-in contains six calculated custom fields:
+* Latest comment on the issue
+* All issue comments made or updated during the past week
+* List of all issues modified during past week (excluding issues with the same type as current)
+* List of all issues with due dates during next week (excluding issues with the same type as current)
+* List of all issues that are overdue (excluding issues with the same type as current)
+* Description of whether any issue in the project is overdue and whether this issue itself is overdue.
+
+This plugin uses JIRA 4.x APIs, so it is not suitable for version 3.13.5 or below.

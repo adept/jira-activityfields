@@ -1,0 +1,48 @@
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+        <application-version min="4.0" max="4.2" />
+    </plugin-info>
+
+    <!-- Modules here -->
+    
+    <customfield-type key="lastweekcomments" name="Comments added to the issue during last week"
+        class="ua.astapov.jira.plugins.activityfields.LastWeekCommentsCFType">
+        <description>Displays the body of the comments added to the issue during last week</description>
+        <resource type="velocity" name="column-view" location="templates/plugins/fields/view/view-rawtext.vm"/>
+        <resource type="velocity" name="xml" location="templates/xml/xml-rawtext.vm"/>
+    </customfield-type>
+    <customfield-type key="latestcomment" name="Latest comment added to the issue"
+        class="ua.astapov.jira.plugins.activityfields.LatestCommentCFType">
+        <description>Displays the body of the latest comment added to the issue</description>
+        <resource type="velocity" name="column-view" location="templates/plugins/fields/view/view-basictext.vm"/>
+        <resource type="velocity" name="xml" location="templates/xml/xml-basictext.vm"/>
+    </customfield-type>
+    <customfield-type key="lastweekactivity" name="Last week's project activity"
+        class="ua.astapov.jira.plugins.activityfields.LastWeekActivityCFType">
+        <description>Displays the list of issues that comprise the activity in the project for the last week</description>
+        <resource type="velocity" name="column-view" location="templates/plugins/fields/view/view-rawtext.vm"/>
+        <resource type="velocity" name="xml" location="templates/xml/xml-rawtext.vm"/>
+    </customfield-type>   
+    <customfield-type key="nextweekactivity" name="Next week's project activity"
+        class="ua.astapov.jira.plugins.activityfields.NextWeekActivityCFType">
+        <description>Displays the list of issues that comprise the planed activity in the project for the next week</description>
+        <resource type="velocity" name="column-view" location="templates/plugins/fields/view/view-rawtext.vm"/>
+        <resource type="velocity" name="xml" location="templates/xml/xml-rawtext.vm"/>
+    </customfield-type>
+    <customfield-type key="overdueissues" name="Overdue issues"
+        class="ua.astapov.jira.plugins.activityfields.OverdueIssuesCFType">
+        <description>Displays the list of issues that are overdue in the current project</description>
+        <resource type="velocity" name="column-view" location="templates/plugins/fields/view/view-rawtext.vm"/>
+        <resource type="velocity" name="xml" location="templates/xml/xml-rawtext.vm"/>
+    </customfield-type>
+    <customfield-type key="whatsoverdue" name="What is overdue in the current project"
+        class="ua.astapov.jira.plugins.activityfields.WhatsOverdueCFType">
+        <description>Displays the textual description of the things overdue in the current project</description>
+        <resource type="velocity" name="column-view" location="templates/plugins/fields/view/view-basictext.vm"/>
+        <resource type="velocity" name="view" location="templates/plugins/fields/view/view-basictext.vm"/>
+        <resource type="velocity" name="xml" location="templates/xml/xml-basictext.vm"/>
+    </customfield-type>
+</atlassian-plugin>
