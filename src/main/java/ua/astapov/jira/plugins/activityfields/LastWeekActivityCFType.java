@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2010 Dmitry Astapov <dastapov@gmail.com>
- * Distributed under Apache License 2.0
+ * Distributed under BSD License
  */
 package ua.astapov.jira.plugins.activityfields;
 
