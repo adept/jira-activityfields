@@ -8,21 +8,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
+import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.customfields.SortableCustomField;
 import com.atlassian.jira.issue.customfields.impl.FieldValidationException;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.jira.issue.search.SearchException;
-import com.atlassian.jira.bc.issue.search.SearchService;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class WhatsOverdueCFType extends WithIssuesFromSameProjectCFType implements SortableCustomField
 {
-    private static final Logger log = Logger.getLogger(WhatsOverdueCFType.class);
-
     public WhatsOverdueCFType(SearchService searchService, JiraAuthenticationContext authenticationContext)
     {
     	super(searchService, authenticationContext);
@@ -50,37 +45,28 @@ public class WhatsOverdueCFType extends WithIssuesFromSameProjectCFType implemen
         boolean issuesOverdue = false;
         boolean projectOverdue = false;
 
-        try
-        {
-        	// Note: does not take into account issues of the same type as current
-        	final List<Issue> issues = getIssues(issue, "(due <= -1d) AND resolution is empty ORDER BY key DESC");
-        	if (! issues.isEmpty()) {
-        		issuesOverdue = true;
-        	}
-        	Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.HOUR_OF_DAY, 0); // 24-hour clock, so - not "HOUR"
-            calendar.set(Calendar.MINUTE, 0);
-            calendar.set(Calendar.SECOND, 0);
-            Date today = calendar.getTime();
-            
-        	if ( (issue.getDueDate() != null) && issue.getDueDate().before(today) ) {
-        		projectOverdue = true;
-        	}
+        // Note: does not take into account issues of the same type as current
+        final List<Issue> issues = getIssues(issue, "due <= -1d AND resolution is empty");
+        if (! issues.isEmpty()) {
+        	issuesOverdue = true;
         }
-        catch (SearchException e)
-        {	
-        	log.error("Error running search", e);
-        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0); // 24-hour clock, so - not "HOUR"
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        Date today = calendar.getTime();
 
+        if ( (issue.getDueDate() != null) && issue.getDueDate().before(today) ) {
+        	projectOverdue = true;
+        }
+        
         String whatsOverdueText = "";
-        if (issuesOverdue && projectOverdue) {
-        	whatsOverdueText = "Project, Issues ";
+        if (projectOverdue) {
+        	whatsOverdueText = "<table><tr><td bgcolor=\"#ff0000\">Проект</td></tr></table>";
         } else if (issuesOverdue) {
-        	whatsOverdueText = "Issues";
-        } else if (projectOverdue) {
-        	whatsOverdueText = "Project ";
+        	whatsOverdueText = "<table><tr><td bgcolor=\"#ffff00\">Задачи</td></tr></table>";
         } else {
-        	whatsOverdueText = "";
+            whatsOverdueText = "";
         }
         return whatsOverdueText;
     }

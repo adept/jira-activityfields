@@ -4,19 +4,20 @@
  */
 package ua.astapov.jira.plugins.activityfields;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.customfields.SortableCustomField;
 import com.atlassian.jira.issue.customfields.impl.CalculatedCFType;
 import com.atlassian.jira.issue.customfields.impl.FieldValidationException;
 import com.atlassian.jira.issue.fields.CustomField;
-import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.jira.issue.search.SearchResults;
 import com.atlassian.jira.issue.search.SearchException;
-import com.atlassian.jira.bc.issue.search.SearchService;
+import com.atlassian.jira.issue.search.SearchResults;
+import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.web.bean.PagerFilter;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -33,28 +34,17 @@ public class WithIssuesFromSameProjectCFType extends CalculatedCFType implements
         this.authenticationContext = authenticationContext;
     }
 
-    public String getStringFromSingularObject(Object value)
+    public List<Issue> getIssues(Issue issue, String additionalClauses)
     {
-        return value != null ? value.toString() : Boolean.FALSE.toString();
-    }
-
-    public Object getSingularObjectFromString(String string) throws FieldValidationException
-    {
-        if (string != null)
-        {
-            return (string);
+        final String projectKey = issue.getProjectObject().getKey();
+        final String issueType = issue.getIssueTypeObject().getName();
+        String jqlQuery = "project = " + projectKey + " and issuetype != \"" + issueType + "\"";
+        if (!additionalClauses.isEmpty()) {
+        	jqlQuery = jqlQuery + " and (" + additionalClauses + ") ORDER BY key DESC";
+        } else {
+            jqlQuery = jqlQuery + " ORDER BY key DESC";
         }
-        else
-        {
-            return Boolean.FALSE.toString();
-        }
-    }
-
-    public List<Issue> getIssues(Issue issue, String additionalClauses) throws SearchException
-    {
-        String projectKey = issue.getProjectObject().getKey();
-        String issueType = issue.getIssueTypeObject().getName();
-        String jqlQuery = "project = " + projectKey + " and issuetype != \"" + issueType + "\" and " + additionalClauses;
+        
         final SearchService.ParseResult parseResult = searchService.parseQuery(authenticationContext.getUser(), jqlQuery);
 
         if (parseResult.isValid())
@@ -69,18 +59,36 @@ public class WithIssuesFromSameProjectCFType extends CalculatedCFType implements
             catch (SearchException e)
             {
                 log.error("Error running search", e);
-                throw e;
+                return new LinkedList<Issue> ();
             }
         }
         else
         {
             log.error("Error parsing jqlQuery: " + parseResult.getErrors());
-            throw new SearchException(parseResult.getErrors().toString());
+            return new LinkedList<Issue> ();
         }
     }
 
 	public Object getValueFromIssue(CustomField field, Issue iss) {
 		// TODO Auto-generated method stub
+		//return getIssues(iss,"");
 		return null;
+	}
+	
+	public String getStringFromSingularObject(Object value)
+	{
+		return value != null ? value.toString() : Boolean.FALSE.toString();
+	}
+
+	public Object getSingularObjectFromString(String string) throws FieldValidationException
+	{
+		if (string != null)
+		{
+			return (string);
+		}
+		else
+		{
+			return Boolean.FALSE.toString();
+		}
 	}
 }
