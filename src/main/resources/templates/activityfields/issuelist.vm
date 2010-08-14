@@ -1,0 +1,28 @@
+#macro (displayIssuesAsList $issues)
+    #if ($issues)
+        <ul>
+        #set ($size = $issues.size())
+        #foreach ($issue in $issues)
+            #if ($displayParams && $displayParams.get('nolink') && !${displayParams.excel_view})
+                #if ($issue.getResolution())
+                    <li><strike>$issue.getSummary()</strike>
+                #else
+                    <li>$issue.getSummary()
+                #end
+            #elseif($displayParams && ${displayParams.excel_view})
+                <li>$issue.getSummary()
+            #else
+                #if ($issue.getResolution())
+                    <li><a href="${requestContext.baseUrl}/browse/$issue.getKey()" title="$issue.getKey()"><strike>$textutils.htmlEncode($issue.getSummary())</strike></a>
+                #else
+                    <li><a href="${requestContext.baseUrl}/browse/$issue.getKey()" title="$issue.getKey()">$textutils.htmlEncode($issue.getSummary())</a>
+                #end
+            #end
+        #end
+        </ul>
+    #else
+    &nbsp;
+    #end
+#end
+
+#displayIssuesAsList($value)
