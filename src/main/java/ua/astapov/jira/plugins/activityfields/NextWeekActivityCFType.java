@@ -20,6 +20,6 @@ public class NextWeekActivityCFType extends WithIssuesFromSameProjectCFType impl
 
         public Object getValueFromIssue(CustomField field, Issue issue)
     {
-        return getIssues(issue, "resolution is empty and ((due >= 0 AND due <= 1w)  OR (due > 1w AND status in (\"In Progress\",\"Open\")))");
+        return getIssues(issue, "resolution is empty and (due >= now() AND due <= 1w)");
     }
 }
